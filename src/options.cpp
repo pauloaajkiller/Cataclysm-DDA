@@ -1741,6 +1741,16 @@ void options_manager::add_options_general()
          0.0, 10.0, 0.0, 0.05
        );
 
+    add( "REALTIME_AUTOATTACK", "general", to_translation( "Realtime auto-combat" ),
+         to_translation( "If true and realtime turn progression is enabled, turns that pass while you are idle are spent attacking a hostile creature in reach instead of waiting." ),
+         false
+       );
+
+    add( "REALTIME_IGNORE_SAFEMODE", "general", to_translation( "Realtime ignores safe mode" ),
+         to_translation( "If true and realtime turn progression is enabled, time keeps passing while hostiles are in view instead of being halted by safe mode.  Your own actions still respect safe mode." ),
+         false
+       );
+
     add_empty_line();
 
     add_option_group( "general", Group( "auto_save_opts", to_translation( "Autosave options" ),

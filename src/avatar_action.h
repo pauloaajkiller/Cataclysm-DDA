@@ -33,6 +33,9 @@ void swim( map &m, avatar &you, const tripoint_bub_ms &p );
 
 void autoattack( avatar &you, map &m );
 
+// True if autoattack would find a hostile creature in reach
+bool has_autoattack_target( avatar &you );
+
 void mend( avatar &you, item_location loc );
 
 /**

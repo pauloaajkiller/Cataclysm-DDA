@@ -746,12 +746,8 @@ static float rate_critter( const Creature &c )
     return m->type->get_total_difficulty();
 }
 
-void avatar_action::autoattack( avatar &you, map &m )
+static std::vector<Creature *> get_autoattack_targets( avatar &you )
 {
-    if( you.has_flag( json_flag_CANNOT_ATTACK ) ) {
-        add_msg( m_info, _( "You are incapable of attacking!" ) );
-        return;
-    }
     const item_location weapon = you.get_wielded_item();
     int reach = weapon ? weapon->reach_range( you ).first : std::max( 1,
                 static_cast<int>( you.calculate_by_enchantment( 1, enchant_vals::mod::MELEE_RANGE_MODIFIER ) ) );
@@ -769,6 +765,22 @@ void avatar_action::autoattack( avatar &you, map &m )
         }
         return !dynamic_cast<const npc &>( *c ).is_enemy();
     } ), critters.end() );
+    return critters;
+}
+
+bool avatar_action::has_autoattack_target( avatar &you )
+{
+    return !you.has_flag( json_flag_CANNOT_ATTACK ) && !get_autoattack_targets( you ).empty();
+}
+
+void avatar_action::autoattack( avatar &you, map &m )
+{
+    if( you.has_flag( json_flag_CANNOT_ATTACK ) ) {
+        add_msg( m_info, _( "You are incapable of attacking!" ) );
+        return;
+    }
+    const item_location weapon = you.get_wielded_item();
+    std::vector<Creature *> critters = get_autoattack_targets( you );
     if( critters.empty() ) {
         add_msg( m_info, _( "No hostile creature in reach.  Waiting a turn." ) );
         if( g->check_safe_mode_allowed() ) {

@@ -2301,7 +2301,12 @@ bool game::do_regular_action( action_id &act, avatar &player_character,
             break;
 
         case ACTION_TIMEOUT:
-            if( check_safe_mode_allowed( false ) ) {
+            // Realtime turn progression: idle time fights for you and keeps the world moving
+            if( get_option<bool>( "REALTIME_AUTOATTACK" ) &&
+                avatar_action::has_autoattack_target( player_character ) ) {
+                avatar_action::autoattack( player_character, here );
+            } else if( get_option<bool>( "REALTIME_IGNORE_SAFEMODE" ) ||
+                       check_safe_mode_allowed( false ) ) {
                 player_character.pause();
             }
             break;
